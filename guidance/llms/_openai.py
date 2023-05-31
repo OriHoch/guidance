@@ -560,7 +560,7 @@ class OpenAISession(LLMSession):
                 num_prompt_tokens = num_tokens_from_messages(prompt_to_messages(prompt), self.llm.model_name)
             else:
                 num_prompt_tokens = len(tiktoken.encoding_for_model(self.llm.model_name).encode(prompt))
-            max_tokens = self.llm.max_tokens_callbacks[max_tokens_callback](get_model_max_tokens(self.llm.model_name), num_prompt_tokens)
+            max_tokens, prompt = self.llm.max_tokens_callbacks[max_tokens_callback](get_model_max_tokens(self.llm.model_name), num_prompt_tokens, prompt)
 
         # get the arguments as dictionary for cache key generation
         args = locals().copy()
