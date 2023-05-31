@@ -754,3 +754,21 @@ guidance.llm = guidance.llms.OpenAI("gpt-3.5-turbo", caching=True)
 guidance.llm.get_usage_cost_usd(guidance.llm.usage_cached), guidance.llm.usage_cached
 ```
 > (0.000462, defaultdict(<class 'int'>, {'prompt_tokens': 71, 'completion_tokens': 6, 'total_tokens': 77}))
+
+### OpenAI Dynamic Max Tokens
+
+OpenAI LLM supports setting the max_tokens argument to gen calls dynamically using a callback function which gets the
+allows max tokens the model supports and the number of tokens in the current prompt.
+
+The following example will use all tokens available in the model minus the number of tokens in the prompt to generate
+the story:
+
+```python
+guidance.llm = guidance.llms.OpenAI("text-davinci-003")
+guidance.llm.register_max_tokens_callback('use_all_tokens', lambda model_max_tokens, num_prompt_tokens: model_max_tokens - num_prompt_tokens)
+res = guidance('''
+A long story about cars:
+{{gen 'story' max_tokens_callback='use_all_tokens'}}
+{{~/assistant}}
+''')['story']
+```
